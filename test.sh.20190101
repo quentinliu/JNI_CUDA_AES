@@ -1,0 +1,32 @@
+NVCC=nvcc
+CXX=g++
+LD=ld
+
+INCLUDES="-I/usr/local/cuda-9.0/include -I/usr/local/opencv/include -I/home/ansible/jdk1.8.0_181/include -I/home/ansible/jdk1.8.0_181/include/linux"
+LDFLAGS="-shared -fPIC"
+CXXFLAGS="-g -fPIC"
+NVCCFLAGS="-g -shared -Xcompiler -fPIC"
+
+CUDA_LD_LIBRARYS="-lcudart"
+CUDA_LD_LIBRARY_PATH="-L/usr/local/cuda-9.0/lib64  -L/usr/local/cuda-9.0/extras/CUPTI/lib64"
+
+OPENCV_LD_LIBRARYS="-lopencv_core -lopencv_highgui -lopencv_imgproc"
+OPENCV_LD_LIBRARY_PATH="-L/usr/local/opencv/lib"
+
+LIBRARYS="$CUDA_LD_LIBRARYS $OPENCV_LD_LIBRARYS -lstdc++"
+LIBRARY_PATH="$CUDA_LD_LIBRARY_PATH $OPENCV_LD_LIBRARY_PATH"
+
+TARGET_LIB="libaescuda.so"
+
+echo "$CXX $INCLUDES $CXXFLAGS -o edu_fudan_lwang_FGEHelper.o -c edu_fudan_lwang_FGEHelper.cpp $LIBRARY_PATH $LIBRARYS"
+#$CXX $INCLUDES $CXXFLAGS -o edu_fudan_lwang_FGEHelper.o -c edu_fudan_lwang_FGEHelper.cpp $LIBRARY_PATH $LIBRARYS
+
+echo "$CXX $INCLUDES $CXXFLAGS -o fge_hepler.o -c src/fge_helper.cpp $LIBRARY_PATH $LIBRARYS"
+#$CXX $INCLUDES $CXXFLAGS -o fge_hepler.o -c src/fge_helper.cpp $LIBRARY_PATH $LIBRARYS
+
+echo "$NVCC $INCLUDES $NVCCFLAGS -o cuda_utility.o -c AESstr.cu $LIBRARY_PATH $LIBRARYS"
+$NVCC $INCLUDES $NVCCFLAGS -o cuda_utility.o -c AESstr.cu $LIBRARY_PATH $LIBRARYS
+
+echo "$LD $LDFLAGS -o $TARGET_LIB cuda_utility.o "
+$LD $LDFLAGS -o $TARGET_LIB  cuda_utility.o /usr/local/cuda-9.0/lib64/libcudart_static.a /usr/lib64/libg.a
+
